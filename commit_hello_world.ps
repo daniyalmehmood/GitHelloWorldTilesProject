@@ -1,17 +1,42 @@
 # === CONFIGURATION ===
 $repoPath = "C:\Users\MuhammadDaniyal\Downloads\GithubTilesProject\GitHelloWorldTilesProject"
-$branchName = "main"
-$dateString = Get-Date -Format "yyyyMMdd_HHmmss"
-$fileName = "hello_$dateString.txt"
-$commitMessage = "chore: hello world $dateString"
+$branchName = "master"  # use "main" if that's your default
+$daysAgo = 5            # 👈 Change this to go X days in the past
+$commitsPerRun = 5      # 👈 Change this to make more/fewer commits
 
-# === NAVIGATE TO REPO ===
+# === GO TO REPO ===
 Set-Location $repoPath
 
-# === CREATE FILE AND COMMIT ===
-"Hello, world!" | Out-File -FilePath $fileName -Encoding utf8
-git add $fileName
-git commit -m "$commitMessage"
+# === GENERATE COMMITS ===
+for ($i = 1; $i -le $commitsPerRun; $i++) {
+    # Spread commits across the day (every ~2 hours apart)
+    $hoursOffset = $i * 2
+    $commitDate = (Get-Date).AddDays(-$daysAgo).Date.AddHours($hoursOffset)
+
+    $commitDateStr = $commitDate.ToString("yyyyMMdd_HHmmss")
+    $gitDateStr = $commitDate.ToString("ddd MMM dd HH:mm:ss yyyy") + " +0500"
+    $fileName = "hello_$commitDateStr.txt"
+    $commitMessage = "chore: hello world $commitDateStr"
+
+    # Create the file
+    "Hello, world from $commitDateStr" | Out-File -FilePath $fileName -Encoding utf8
+    git add $fileName
+
+    # Fake the commit date
+    $env:GIT_AUTHOR_DATE = $gitDateStr
+    $env:GIT_COMMITTER_DATE = $gitDateStr
+
+    git commit -m "$commitMessage"
+
+    Write-Host "✅ Commit $i/$commitsPerRun from $commitDateStr done!"
+}
+
+# === PUSH ALL AT ONCE ===
 git push origin $branchName
 
-Write-Host "✅ Commit pushed successfully to GitHelloWorldTilesProject!"
+# === CLEANUP ENV VARS ===
+Remove-Item Env:\GIT_AUTHOR_DATE -ErrorAction SilentlyContinue
+Remove-Item Env:\GIT_COMMITTER_DATE -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "🚀 All $commitsPerRun commits pushed to GitHub!"
