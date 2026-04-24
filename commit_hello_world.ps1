@@ -8,6 +8,14 @@ $commitMessage = "chore: hello world $dateString"
 # === NAVIGATE TO REPO ===
 Set-Location $repoPath
 
+# === DELETE EXISTING .TXT FILES ===
+$txtFiles = Get-ChildItem -Filter "*.txt"
+if ($txtFiles) {
+    $txtFiles | Remove-Item -Force
+    git add -u
+    git commit -m "chore: remove old txt files"
+}
+
 # === CREATE FILE AND COMMIT ===
 "Hello, world!" | Out-File -FilePath $fileName -Encoding utf8
 git add $fileName
