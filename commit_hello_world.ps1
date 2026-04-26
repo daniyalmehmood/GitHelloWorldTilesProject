@@ -1,5 +1,5 @@
 # === CONFIGURATION ===
-$repoPath = "C:\Users\qwerty\Downloads\GitHelloWorldTilesProject"
+$repoPath = $PSScriptRoot
 $branchName = "main"
 $dateString = Get-Date -Format "yyyyMMdd_HHmmss"
 $fileName = "hello_$dateString.txt"
