@@ -7,6 +7,7 @@ $commitMessage = "chore: hello world $dateString"
 
 # === NAVIGATE TO REPO ===
 Set-Location $repoPath
+git pull
 
 # === DELETE EXISTING .TXT FILES ===
 $txtFiles = Get-ChildItem -Filter "*.txt"
